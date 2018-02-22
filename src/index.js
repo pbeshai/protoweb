@@ -53,7 +53,7 @@ function main(argv) {
     // Create a new block and start the dev server
     case 'new': {
       createNewPrototype({ transpile, includeD3, sass });
-      hotServer({ port, transpile, sass });
+      hotServer({ port, transpile });
       break;
     }
 
