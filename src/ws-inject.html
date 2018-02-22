@@ -1,0 +1,35 @@
+<!-- hot-server appends this snippit to inject code via a websock  -->
+<script>
+!(function() {
+  var ws = new WebSocket(location.origin.replace(/^http/, 'ws'))
+
+  ws.onopen = function(event) {
+    console.log('hot-server: WebSocket connected.');
+  }
+  ws.onclose = function (event) {
+    console.log('hot-server: WebSocket closed.');
+
+  }
+  ws.onmessage = function(msg) {
+    var {path, type, str} = JSON.parse(msg.data)
+    console.log(`hot-server: Received update from websocket (${type} on ${path})`);
+
+    if (type == 'jsInject') {
+      var script = document.createElement('script')
+      script.textContent = str
+      document.head.appendChild(script)
+      script.remove()
+    }
+    if (type == 'cssInject') {
+      document.querySelectorAll('link').forEach(d => {
+        if (d.href.includes(path)) d.href = d.href
+      })
+    }
+    if (type == 'reload') {
+      console.log('hot-server: Forcing full page reload...')
+      window.location.reload()
+    }
+  }
+  console.log('hot-server: Hot reload enabled.')
+})()
+</script>
