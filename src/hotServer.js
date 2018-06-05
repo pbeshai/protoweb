@@ -101,19 +101,23 @@ function compileSass(filePath, fileContents) {
 
 // set up express static server with a websocket
 function hotServer(options) {
-  let { port = 3000, transpile = true } = options;
+  let { port = 3000, transpile = true, hot = true } = options;
 
   console.log(
-    chalk.gray(`\nInitializing hot-server at `) +
+    chalk.gray(`\nInitializing web server at `) +
       chalk.cyan(`http://localhost:${port}`) +
       chalk.gray('...')
   );
   console.log(
-    chalk.gray(`JS Transpilation is `) +
+    chalk.gray(`JS transpilation is `) +
       (transpile ? chalk.green('enabled') : chalk.red('disabled')) +
       chalk.gray('.')
   );
-
+  console.log(
+    chalk.gray(`JS hot reloading is `) +
+      (hot ? chalk.green('enabled') : chalk.red('disabled')) +
+      chalk.gray('.')
+  );
   console.log();
 
   const server = express()
@@ -131,20 +135,23 @@ function hotServer(options) {
   // if a .js or .css files changes, load and send to client via websocket
   const wss = new WebSocket.Server({ server });
 
+  const baseDir = process.cwd();
+  console.log('baseDir =', baseDir);
   chokidar
-    .watch(['.'], { ignored: /node_modules|\.git|[/\\]\./ })
+    .watch([process.cwd()], { ignored: /node_modules|\.git|[/\\]\.|^\./ })
     .on('change', filePath => {
+      console.log('change on', filePath);
       try {
         // read in the file from disk
         let fileContents = fs.readFileSync(filePath, 'utf8');
 
         let errorOccurred = false;
-        const filename = filePath.replace(__dirname, '');
+        const filename = filePath.replace(baseDir, '').substring(1); // drop initial '/'
         const path = `/${filename}`;
         console.log(chalk.gray(`> Change detected at `) + chalk.green(path));
 
         let type = 'reload';
-        if (path.includes('.js')) {
+        if (/.js$/.test(path)) {
           type = 'jsInject';
           // transpile if set to
           if (transpile) {
@@ -158,16 +165,16 @@ function hotServer(options) {
               } catch (transpilationError) {
                 errorOccurred = true;
                 const errorString = `
-                  console.error('! Error during javascript transpilation of ${
-                    filePath
-                  }:\\n\\n' + ${JSON.stringify(transpilationError.snippet)});`;
+                  console.error('! Error during javascript transpilation of ${filePath}:\\n\\n' + ${JSON.stringify(
+                  transpilationError.snippet
+                )});`;
                 fileContents = errorString;
               }
             }
           }
-        } else if (path.includes('.css')) {
+        } else if (/.css$/.test(path)) {
           type = 'cssInject';
-        } else if (path.includes('.scss')) {
+        } else if (/.(scss|sass)$/.test(path)) {
           type = 'cssInject';
           fileContents = compileSass(filePath, fileContents);
 
@@ -180,10 +187,15 @@ function hotServer(options) {
           return;
         }
 
+        // if hot reload is disabled, force it to be a reload
+        if (type === 'jsInject' && !hot) {
+          type = 'reload';
+        }
+
         if (errorOccurred) {
           console.log(chalk.red('> Sending error to browser...'));
         } else {
-          if (type === 'reload') {
+          if (type === 'reload' || (type === 'jsInject' && !hot)) {
             console.log(chalk.yellow('> Forcing full page reload...'));
           } else {
             console.log(chalk.magenta('> Hot reloading...'));

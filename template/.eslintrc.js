@@ -7,6 +7,12 @@ module.exports = {
   root: true,
 
   // parser: 'babel-eslint',
+  globals: {
+    d3: true,
+    $: true,
+    google: true,
+    _: true,
+  },
 
   plugins: [],
 

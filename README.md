@@ -35,9 +35,48 @@ Commands:
 Options:
   --port       The port the web server uses             [number] [default: 3000]
   --transpile  Enable javascript transpilation         [boolean] [default: true]
+  --hot        Enable javascript hot reloading         [boolean] [default: true]
   --d3         Include d3 as an external script during creation
                                                        [boolean] [default: true]
   --sass       Enable sass compilation                 [boolean] [default: true]
   -h, --help   Show help                                               [boolean]
   --version    Show version number                                     [boolean]
+```
+
+### Sample Usage
+
+*In an empty directory...*
+
+**Create a project in current directory with defaults**
+
+```
+protoweb
+```
+
+**Create a project without transpilation or Sass**
+
+```
+protoweb --sass=false --transpile=false
+```
+
+*Create a project and have the initial run work without hot reloading*
+
+```
+protoweb --hot=false
+```
+
+
+*After creating your initial prototype...*
+
+**Run web server without hot reloading and without tranpsilation**
+
+```
+protoweb --hot=false --transpile=false
+```
+
+
+**Run web server on different port**
+
+```
+protoweb --port=8080
 ```

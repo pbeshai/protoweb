@@ -24,6 +24,9 @@ const argv = require('yargs')
   .describe('transpile', 'Enable javascript transpilation')
   .boolean('transpile')
   .default('transpile', true)
+  .describe('hot', 'Enable javascript hot reloading')
+  .boolean('hot')
+  .default('hot', true)
   .option('d3')
   .describe('d3', 'Include d3 as an external script during creation')
   .boolean('d3')
@@ -37,7 +40,7 @@ const argv = require('yargs')
 
 function main(argv) {
   let command = argv._[0];
-  const { port, transpile, d3: includeD3, sass } = argv;
+  const { port, transpile, d3: includeD3, sass, hot } = argv;
 
   // if no command is provided, run either new or serve depending on
   // whether the current directory is empty.
@@ -53,13 +56,13 @@ function main(argv) {
     // Create a new block and start the dev server
     case 'new': {
       createNewPrototype({ transpile, includeD3, sass });
-      hotServer({ port, transpile });
+      hotServer({ port, transpile, hot });
       break;
     }
 
     // Start the dev server
     case 'serve': {
-      hotServer({ port, transpile });
+      hotServer({ port, transpile, hot });
       break;
     }
     default:
