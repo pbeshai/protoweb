@@ -13,7 +13,10 @@
     "type": "git",
     "url": "git+https://github.com/pbeshai/protoweb.git"
   },
-  "keywords": ["prototyping", "web"],
+  "keywords": [
+    "prototyping",
+    "web"
+  ],
   "author": "Peter Beshai",
   "license": "MIT",
   "bugs": {
