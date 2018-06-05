@@ -29,12 +29,12 @@
     "child_process": "^1.0.2",
     "chokidar": "^2.0.2",
     "express": "^4.16.2",
-    "fs-extra": "^5.0.0",
-    "node-sass": "^4.7.2",
+    "fs-extra": "^6.0.1",
+    "node-sass": "^4.9.0",
     "serve-index": "^1.9.1",
     "serve-static": "^1.13.2",
     "string-template": "^1.0.0",
-    "ws": "^4.0.0",
+    "ws": "^5.2.0",
     "yargs": "^11.0.0"
   }
 }
