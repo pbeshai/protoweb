@@ -12,6 +12,7 @@ module.exports = {
     $: true,
     google: true,
     _: true,
+    topojson: true,
   },
 
   plugins: [],

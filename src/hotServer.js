@@ -151,7 +151,7 @@ function hotServer(options) {
         console.log(chalk.gray(`> Change detected at `) + chalk.green(path));
 
         let type = 'reload';
-        if (/.js$/.test(path)) {
+        if (/\.js$/.test(path)) {
           type = 'jsInject';
           // transpile if set to
           if (transpile) {
@@ -172,14 +172,14 @@ function hotServer(options) {
               }
             }
           }
-        } else if (/.css$/.test(path)) {
-          type = 'cssInject';
-        } else if (/.(scss|sass)$/.test(path)) {
+        } else if (/\.(scss|sass)$/.test(path)) {
           type = 'cssInject';
           fileContents = compileSass(filePath, fileContents);
 
           // abort since the dist_ css file will trigger a change.
           return;
+        } else if (/\.css$/.test(path)) {
+          type = 'cssInject';
         }
 
         if (fileContents == null) {
