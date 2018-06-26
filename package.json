@@ -1,6 +1,6 @@
 {
   "name": "protoweb",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Web prototype scaffolding and hot-reloading server",
   "main": "src/index.js",
   "bin": {
